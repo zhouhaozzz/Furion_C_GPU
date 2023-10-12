@@ -22,7 +22,7 @@ __global__ void Furion_NS::Cal_FAV(real_t* Phi, real_t* Psi, real_t* L, real_t* 
         N[i] = cos(Phi[i]) * cos(Psi[i]);
     }
 
-    __syncthreads();
+    //__syncthreads();
 }
 
 void Furion_Angle_Vector::Furion_angle_vector(real_t* Phi, real_t* Psi, real_t* L, real_t* M, real_t* N)
@@ -37,24 +37,19 @@ void Furion_Angle_Vector::Furion_angle_vector(real_t* Phi, real_t* Psi, real_t* 
     cudaMemcpy(d_phi, Phi, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
     cudaMemcpy(d_psi, Psi, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
 
-    real_t* d_L, * d_M, * d_N;
-    cudaMalloc((void**)&d_L, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_M, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_N, Furion::n * sizeof(real_t));
+    Furion_NS::Cal_FAV << <blocksPerGrid, threadsPerBlock >> > (d_phi, d_psi, L, M, N, n);
 
-    Furion_NS::Cal_FAV << <blocksPerGrid, threadsPerBlock >> > (d_phi, d_psi, d_L, d_M, d_N, n);
-
-    cudaMemcpy(L, d_L, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(M, d_M, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(N, d_N, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(L, d_L, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(M, d_M, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(N, d_N, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
     //
     //cout << M[0] << endl;
     //std::cin.get();
     cudaFree(d_phi);
     cudaFree(d_psi);
-    cudaFree(d_L);
-    cudaFree(d_M);
-    cudaFree(d_N);
+    //cudaFree(d_L);
+    //cudaFree(d_M);
+    //cudaFree(d_N);
 
 }
 

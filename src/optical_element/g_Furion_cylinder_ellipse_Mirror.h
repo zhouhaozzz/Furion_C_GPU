@@ -20,8 +20,8 @@ namespace Furion_NS
 
         G_Cylinder_Ellipse* center;
 
-        void intersection(real_t* T) override;
-        void normal(real_t* Nx, real_t* Ny, real_t* Nz) override;
+        void intersection(real_t* T, real_t* X2, real_t* Y2, real_t* Z2, real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1) override;
+        void normal(real_t* X2, real_t* Y2, real_t* Z2, real_t* Nx, real_t* Ny, real_t* Nz) override;
         void matrixMulti_3n(real_t* L2, real_t* M2, real_t* N2, real_t* matrix, real_t* L, real_t* M, real_t* N, real_t dx, int n) override;  //XYZ:1*3; LMN:1*n
         void center_to_oe_p(real_t* X2, real_t* Y2, real_t* Z2, real_t* X, real_t* Y, real_t* Z);
         void center_to_oe_v(real_t* Nx, real_t* Ny, real_t* Nz, real_t* L, real_t* M, real_t* N);
