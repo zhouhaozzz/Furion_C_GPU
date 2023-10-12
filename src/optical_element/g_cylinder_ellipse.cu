@@ -29,7 +29,7 @@ void G_Cylinder_Ellipse::run(G_Beam* beam_in, real_t ds, real_t di, real_t chi, 
 
 }
 
-void G_Cylinder_Ellipse::source_to_oe(real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N)
+void G_Cylinder_Ellipse::source_to_oe(real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1, real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N)
 {
     int n = Furion::n;
 
@@ -43,8 +43,8 @@ void G_Cylinder_Ellipse::source_to_oe(real_t* X, real_t* Y, real_t ds, real_t* L
     Z[0] = this->r1 - ds;
 
     G_Oe::matrixMulti_33(OS, OS_0, OS_1);
-    G_Oe::matrixMulti_3n(this->X1, this->Y1, this->Z1, OS, X, Y, Z, -this->e, n);
-    G_Oe::matrixMulti_3nn(this->L1, this->M1, this->N1, OS, L, M, N, 0, n);
+    G_Oe::matrixMulti_3n(X1, Y1, Z1, OS, X, Y, Z, -this->e, n);
+    G_Oe::matrixMulti_3nn(L1, M1, N1, OS, L, M, N, 0, n);
 
     //Furion_rotx(obj.alpha)* (Furion_rotz(obj.chi) * [X; Y; repmat(obj.r1 - ds, 1, n)]) - repmat([0; 0; obj.e], 1, n);
 
@@ -79,52 +79,52 @@ __global__ void Furion_NS::intersection_cuda_GCE(real_t* T, real_t* X2, real_t* 
     __syncthreads();
 }
 
-void G_Cylinder_Ellipse::intersection(real_t* T)
+void G_Cylinder_Ellipse::intersection(real_t* T, real_t* X2, real_t* Y2, real_t* Z2, real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1)
 {
     int n = Furion::n;
 
     int threadsPerBlock = BLOCK_SIZE;
     int blocksPerGrid = (Furion::n + threadsPerBlock - 1) / threadsPerBlock;
 
-    real_t* d_X2, * d_Y2, * d_Z2;
-    real_t* d_X1, * d_Y1, * d_Z1;
-    real_t* d_L1, * d_M1, * d_N1, * d_T;
-    cudaMalloc((void**)&d_X2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Y2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Z2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_L1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_M1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_N1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_X1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Y1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Z1, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_T, Furion::n * sizeof(real_t));
+    //real_t* d_X2, * d_Y2, * d_Z2;
+    //real_t* d_X1, * d_Y1, * d_Z1;
+    //real_t* d_L1, * d_M1, * d_N1, * d_T;
+    //cudaMalloc((void**)&d_X2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Y2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Z2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_L1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_M1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_N1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_X1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Y1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Z1, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_T, Furion::n * sizeof(real_t));
 
-    cudaMemcpy(d_L1, this->L1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_M1, this->M1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_N1, this->N1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_X1, this->X1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_Y1, this->Y1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_Z1, this->Z1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_L1, this->L1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_M1, this->M1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_N1, this->N1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_X1, this->X1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_Y1, this->Y1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_Z1, this->Z1, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
 
-    Furion_NS::intersection_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (d_T, d_X2, d_Y2, d_Z2, d_X1, d_Y1, d_Z1, d_L1, d_M1, d_N1, this->a, this->b, n);
+    Furion_NS::intersection_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (T, X2, Y2, Z2, X1, Y1, Z1, L1, M1, N1, this->a, this->b, n);
 
-    cudaMemcpy(T, d_T, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->T, d_T, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->X2, d_X2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->Y2, d_Y2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->Z2, d_Z2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    cudaMemcpy(this->T, T, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(this->T, d_T, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(this->X2, d_X2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(this->Y2, d_Y2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(this->Z2, d_Z2, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
 
-    cudaFree(d_X1);
-    cudaFree(d_Y1);
-    cudaFree(d_Z1);
-    cudaFree(d_X2);
-    cudaFree(d_Y2);
-    cudaFree(d_Z2);
-    cudaFree(d_L1);
-    cudaFree(d_M1);
-    cudaFree(d_N1);
-    cudaFree(d_T);
+    //cudaFree(d_X1);
+    //cudaFree(d_Y1);
+    //cudaFree(d_Z1);
+    //cudaFree(d_X2);
+    //cudaFree(d_Y2);
+    //cudaFree(d_Z2);
+    //cudaFree(d_L1);
+    //cudaFree(d_M1);
+    //cudaFree(d_N1);
+    //cudaFree(d_T);
 
     cout << "G_Cylinder_EllipseµÄintersection" << endl;
 }
@@ -151,41 +151,41 @@ __global__ void Furion_NS::normal_cuda_GCE(real_t* Nx, real_t* Ny, real_t* Nz, r
     __syncthreads();
 }
 
-void G_Cylinder_Ellipse::normal(real_t* Nx, real_t* Ny, real_t* Nz)
+void G_Cylinder_Ellipse::normal(real_t* X2, real_t* Y2, real_t* Z2, real_t* Nx, real_t* Ny, real_t* Nz)
 {
     int n = Furion::n;
 
     int threadsPerBlock = BLOCK_SIZE;
     int blocksPerGrid = (Furion::n + threadsPerBlock - 1) / threadsPerBlock;
 
-    real_t* d_X2, * d_Y2, * d_Z2;
-    real_t* d_Nx, * d_Ny, * d_Nz;
-    cudaMalloc((void**)&d_X2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Y2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Z2, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Nx, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Ny, Furion::n * sizeof(real_t));
-    cudaMalloc((void**)&d_Nz, Furion::n * sizeof(real_t));
+    //real_t* d_X2, * d_Y2, * d_Z2;
+    //real_t* d_Nx, * d_Ny, * d_Nz;
+    //cudaMalloc((void**)&d_X2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Y2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Z2, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Nx, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Ny, Furion::n * sizeof(real_t));
+    //cudaMalloc((void**)&d_Nz, Furion::n * sizeof(real_t));
 
-    cudaMemcpy(d_X2, this->X2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_Y2, this->Y2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_Z2, this->Z2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_X2, this->X2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_Y2, this->Y2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_Z2, this->Z2, Furion::n * sizeof(real_t), cudaMemcpyHostToDevice);
 
-    Furion_NS::normal_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (d_Nx, d_Ny, d_Nz, d_X2, d_Y2, d_Z2, this->a, this->b, n);
+    Furion_NS::normal_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (Nx, Ny, Nz, X2, Y2, Z2, this->a, this->b, n);
 
-    cudaMemcpy(Nx, d_Nx, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(Ny, d_Ny, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(Nz, d_Nz, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->Nx, d_Nx, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->Ny, d_Ny, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
-    cudaMemcpy(this->Nz, d_Nz, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(Nx, d_Nx, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(Ny, d_Ny, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(Nz, d_Nz, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    cudaMemcpy(this->Nx, Nx, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    cudaMemcpy(this->Ny, Ny, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    cudaMemcpy(this->Nz, Nz, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
 
-    cudaFree(d_X2);
-    cudaFree(d_Y2);
-    cudaFree(d_Z2);
-    cudaFree(d_Nx);
-    cudaFree(d_Ny);
-    cudaFree(d_Nz);
+    //cudaFree(d_X2);
+    //cudaFree(d_Y2);
+    //cudaFree(d_Z2);
+    //cudaFree(d_Nx);
+    //cudaFree(d_Ny);
+    //cudaFree(d_Nz);
 
     cout << "G_Cylinder_EllipseµÄnormal" << endl;
 }
@@ -200,21 +200,21 @@ __global__ void Furion_NS::h_slope_cuda_GCE(real_t* h_slope, int n)
     }
 }
 
-void G_Cylinder_Ellipse::h_slope(real_t* h_slope, real_t* Y2)
+void G_Cylinder_Ellipse::h_slope(real_t* X2, real_t* Y2, real_t* Z2, real_t* L1, real_t* N1, real_t* h_slope)
 {
     int n = Furion::n;
 
     int threadsPerBlock = BLOCK_SIZE;
     int blocksPerGrid = (Furion::n + threadsPerBlock - 1) / threadsPerBlock;
 
-    real_t* d_h_slope;
-    cudaMalloc((void**)&d_h_slope, Furion::n * sizeof(real_t));
+    //real_t* d_h_slope;
+    //cudaMalloc((void**)&d_h_slope, Furion::n * sizeof(real_t));
 
-    Furion_NS::h_slope_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (d_h_slope, n);
+    Furion_NS::h_slope_cuda_GCE << <blocksPerGrid, threadsPerBlock >> > (h_slope, n);
 
-    cudaMemcpy(h_slope, d_h_slope, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(h_slope, d_h_slope, Furion::n * sizeof(real_t), cudaMemcpyDeviceToHost);
 
-    cudaFree(d_h_slope);
+    //cudaFree(d_h_slope);
 
     cout << " G_Cylinder_EllipseµÄh_slope" << endl;
 }

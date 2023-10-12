@@ -10,7 +10,7 @@
 
 using namespace Furion_NS;
 
-__global__ void test(float*phys, int NThreads)
+__global__ void device(float*phys, int NThreads)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
 
@@ -18,6 +18,15 @@ __global__ void test(float*phys, int NThreads)
     {
         phys[i + 0] = 1*10+i;
     }
+}
+
+void host(float* phys, int NThreads)
+{
+    const static int kk = 100;
+    int threadsPerBlock = 128;
+    int blocksPerGrid = (kk + threadsPerBlock - 1) / threadsPerBlock;
+
+    device << <blocksPerGrid, threadsPerBlock >> > (phys, kk);
 }
 
 int main(int argc, char* argv[])
@@ -38,31 +47,25 @@ int main(int argc, char* argv[])
     //float* phy = new float[kk];
 
     //float* d_data;
-    //cudaMalloc((void**)&d_data, (kk) * sizeof(float));
-
-    //int threadsPerBlock = 128;
-    //int blocksPerGrid = (kk + threadsPerBlock - 1) / threadsPerBlock;
-
-    //test << <blocksPerGrid, threadsPerBlock >> > (d_data, kk);
-
-
-    //cudaMemcpy(d_data, phy, (kk) * sizeof(float), cudaMemcpyDeviceToHost);
+    //cudaMalloc((void**)&d_data, (100) * sizeof(float));
+    //host(d_data, 100);
+    //cudaMemcpy(phy, d_data, (kk) * sizeof(float), cudaMemcpyDeviceToHost);
+    //cout << phy[1] << endl;
 
     ////std::cin.get();
-    //
     //cudaFree(d_data);
 
-    //auto furion = new Furion(rank, size);
+    auto furion = new Furion(rank, size);
 
     #endif
 
-    auto furion = new Furion(rank, size);
+    //auto furion = new Furion(rank, size);
 
     //delete furion;
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Execution time: " << duration.count() / 1e6 << " seconds" << std::endl;
+    std::cout << "Total time: " << duration.count() / 1e6 << " seconds" << std::endl;
 
     // MPI_Finalize();
 

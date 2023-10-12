@@ -54,7 +54,7 @@ namespace Furion_NS
         ~Furion();
 
         size_t i = 0;
-        const static int n = 100000;
+        const static int n = 10000000;
         real_t Lambda[5] = { 1, 1.55, 2, 2.5, 3 };
         real_t pre_Mirror_theta[5] = { 0.82448, 1.0266, 1.1662, 1.3039, 1.4285 };
         real_t grating_theta[5] = { 6.397, 7.9674, 9.0524, 10.124, 11.093 };

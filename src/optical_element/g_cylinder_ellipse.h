@@ -30,10 +30,10 @@ namespace Furion_NS
 
         void run(G_Beam* beam_in, real_t ds, real_t di, real_t chi, real_t theta, No_Surfe* surface, real_t r1, real_t r2, Grating* grating);
 
-        void intersection(real_t* T) override;
-        void source_to_oe(real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N) override;
-        void normal(real_t* Nx, real_t* Ny, real_t* Nz) override;
-        void h_slope(real_t* h_slope, real_t* Y2) override;
+        void intersection(real_t* T, real_t* X2, real_t* Y2, real_t* Z2, real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1) override;
+        void source_to_oe(real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1, real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N) override;
+        void normal(real_t* X2, real_t* Y2, real_t* Z2, real_t* Nx, real_t* Ny, real_t* Nz) override;
+        void h_slope(real_t* X2, real_t* Y2, real_t* Z2, real_t* L1, real_t* N1, real_t* h_slope) override;
     };
 
     __global__ void intersection_cuda_GCE(real_t* T, real_t* X2, real_t* Y2, real_t* Z2, real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1, real_t a, real_t b, int n);

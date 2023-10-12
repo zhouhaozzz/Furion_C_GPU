@@ -58,16 +58,16 @@ namespace Furion_NS
         class Furion_Vector_Angle f_v_a;
 
         void reflect(G_Beam* beam_in, real_t ds, real_t di, real_t chi, real_t theta);
-        virtual void source_to_oe(real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N);
+        virtual void source_to_oe(real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1, real_t* X, real_t* Y, real_t ds, real_t* L, real_t* M, real_t* N);
         void matrixMulti(real_t* L2, real_t* M2, real_t* N2, real_t* matrix, real_t* L, real_t* M, real_t* N, int n);  //XYZ:1*3; LMN:1*n
         void matrixMulti_33(real_t* matrix, real_t* matrix1, real_t* matrix2);  //XYZ:1*3; LMN:1*n
         virtual void matrixMulti_3n(real_t* L2, real_t* M2, real_t* N2, real_t* matrix, real_t* L, real_t* M, real_t* N, real_t dx, int n);  //XYZ:1*3; LMN:1*n
         virtual void matrixMulti_3nn(real_t* L2, real_t* M2, real_t* N2, real_t* matrix, real_t* L, real_t* M, real_t* N, real_t dx, int n);  //XYZ:1*3; LMN:1*n
-        virtual void intersection(real_t* T);
-        virtual void normal(real_t* Nx, real_t* Ny, real_t* Nz);
-        virtual void h_slope(real_t* h_slope, real_t* Y2);
+        virtual void intersection(real_t* T, real_t* X2, real_t* Y2, real_t* Z2, real_t* X1, real_t* Y1, real_t* Z1, real_t* L1, real_t* M1, real_t* N1);
+        virtual void normal(real_t* X2, real_t* Y2, real_t* Z2, real_t* Nx, real_t* Ny, real_t* Nz);
+        virtual void h_slope(real_t* X2, real_t* Y2, real_t* Z2, real_t* L1, real_t* N1, real_t* h_slope);
         void oe_to_image(real_t* X3, real_t* Y3, real_t* Z3, real_t* L3, real_t* M3, real_t* N3, real_t* X2, real_t* Y2, real_t* Z2, real_t di, real_t* L2, real_t* M2, real_t* N2);
-        void g_oe_GPU(real_t* X3, real_t* Y3, real_t* Z3, real_t* L3, real_t* M3, real_t* N3, real_t* T, real_t* Z2, real_t lambda, real_t m, real_t n0, real_t b);
+        void g_oe_GPU(real_t* X_, real_t* Y_, real_t* Phase, real_t* X3, real_t* Y3, real_t* Z3, real_t* L3, real_t* M3, real_t* N3, real_t* T, real_t* Z2, real_t lambda, real_t m, real_t n0, real_t b);
 
     };
 
